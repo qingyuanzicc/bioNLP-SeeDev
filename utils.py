@@ -23,8 +23,7 @@ def dumpData4Gb(data, openPath):
 
 
 def split2sentence(d):
-
-    s="".join(list(map(lambda x:x.text,d.characters)))
+    s = "".join(list(map(lambda x: x.text, d.characters)))
     s = s.replace('\n', ' ')
     first_word = re.findall(r"[\.\?\!]\s?[A-Z]+\w+", s)
     sent = re.split(r'[\.\?\!]\s?[A-Z]+\w+', s)
@@ -36,7 +35,7 @@ def split2sentence(d):
         for i, pre_sent in enumerate(new_sents):
             if pre_sent.startswith(char):
                 pre_sent = pre_sent.replace(char, '', 1)
-                new_sents[i-1] = new_sents[i - 1] + char
+                new_sents[i - 1] = new_sents[i - 1] + char
                 for chara in pre_sent:
                     if chara.find(' ') == 0 and chara == ' ':
                         pre_sent = pre_sent.replace(' ', '', 1)
@@ -53,25 +52,22 @@ def count_words_in_each_sentence(sentence):
 
 
 def retrieve_entities(d):
-
     for each_t in d.entities:
-       start=int(each_t.pos[0][0])
-       end=int(each_t.pos[-1][-1])
-       entity_in_sentence=list(filter(lambda x:x.s_start2end_index[0]<=start
-                            and x.s_start2end_index[-1]>=end,d.sentences))
-       assert len(entity_in_sentence)!=0
-       entity_in_sentence[0].entitys.append(each_t)
-
-
+        start = int(each_t.pos[0][0])
+        end = int(each_t.pos[-1][-1])
+        entity_in_sentence = list(filter(lambda x: x.s_start2end_index[0] <= start
+                                                   and x.s_start2end_index[-1] >= end, d.sentences))
+        assert len(entity_in_sentence) != 0
+        entity_in_sentence[0].entitys.append(each_t)
 
 
 def retrieve_relations(d):
     for relation in d.relations:
-        e1=relation.entity1
-        e2=relation.entity2
-        realtion_in_sentence=list(filter(lambda x:e1 in x.entitys and e2 in x.entitys,d.sentences))
-        if len(realtion_in_sentence)==0:
-            relation.skip_sentence=1
+        e1 = relation.entity1
+        e2 = relation.entity2
+        realtion_in_sentence = list(filter(lambda x: e1 in x.entitys and e2 in x.entitys, d.sentences))
+        if len(realtion_in_sentence) == 0:
+            relation.skip_sentence = 1
             d.skip_sentence_relation.append(relation)
         else:
             realtion_in_sentence[0].relations.append(relation)
