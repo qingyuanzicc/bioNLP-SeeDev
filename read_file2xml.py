@@ -67,21 +67,24 @@ def creat_entity_obj(rootp, a1_f, doc):
             doc.entities.append(entity_object)  # 保存到当前doc对象得entities中
 
 
-def creat_relation_obj(rootp, a2_f, d):
+def creat_relation_obj(rootp, a2_f, doc):
     with open(os.path.join(rootp, a2_f), encoding="utf-8") as f3:  # 读取实体标注文件
         relation_line = f3.read().splitlines()  # relation
     relation_line = list(filter(lambda x: x.strip() != '', relation_line))
     if len(relation_line) > 0:
-        temp = set()
+        temp = []
+        rid2eid = {}
         for rest in relation_line:
             r_id, type_pos = rest.split('\t')
             r_type, e1_type, e1_id, e2_type, e2_id = get_relation_and_entityid(type_pos)
-            e1 = list(filter(lambda x: x.id == e1_id, d.entities))[0]
-            e2 = list(filter(lambda x: x.id == e2_id, d.entities))[0]
+            e1 = list(filter(lambda x: x.id == e1_id, doc.entities))[0]
+            e2 = list(filter(lambda x: x.id == e2_id, doc.entities))[0]
+            rid2eid[r_id] = e1.id + ' ' + e2.id
+            temp.append([e1.id, e2.id])
             relation_object = Relation(r_id, r_type, e1, e2, e1_type, e2_type)
-            d.relations.append(relation_object)
-            temp.add((e1.id, e2.id))
+            doc.relations.append(relation_object)
         assert len(temp) == len(relation_line)
+        doc.multi_relation = utils.two_e_have_multi_r(temp, rid2eid, doc.relations)
 
 
 def creat_sentence_obj(doc):
@@ -108,9 +111,7 @@ def creat_sentence_obj(doc):
         sent_text = sents[s_id]
         sentence_object = Sentence(sent_id, sent_len, sent_start2end_index,
                                    0, sent_text)
-
         doc.sentences.append(sentence_object)
-
     # 调用方法:查找每句话中的实体
     utils.retrieve_entities(doc)
     # 调用方法:查找每句话中的关系

@@ -20,7 +20,8 @@ class Doc(object):
         self.entities = []
         self.relations = []
         self.samples = []
-        self.skip_sentence_relation=[]
+        self.skip_sentence_relation = []
+        self.multi_relation = []
         self.num_words = 0
         self.num_sentences = 0
         self.num_entities = 0
@@ -30,7 +31,7 @@ class Doc(object):
         index = 0
         for l in self.lines:
             l_texts = l.text
-            line_id = l.line_id
+            line_id = l.id
             for w in l_texts:
                 self.characters.append(Character(w, index, line_id))
                 index += 1
@@ -71,27 +72,27 @@ class Sentence(object):
         self.s_start2end_index = s_start2end_index
         self.s_words_num = s_words_num
         self.s_text = s_text
-        self.entitys=[]
-        self.relations=[]
+        self.entitys = []
+        self.relations = []
 
     def init(self):
         self.s_entities_num = len(self.entitys)
-        self.s_entities_id = list(map(lambda x:x.id,self.entitys))
+        self.s_entities_id = list(map(lambda x: x.id, self.entitys))
         self.s_relations_num = len(self.relations)
-        self.s_relations_id = list(map(lambda x:x.id,self.relations))
-
+        self.s_relations_id = list(map(lambda x: x.id, self.relations))
         pass
+
 
 class Line(object):
     def __init__(self, line_id, doc_id, text):
-        self.line_id = line_id
+        self.id = line_id
         self.doc_id = doc_id
         self.text = text
 
 
 class Entity(object):
     def __eq__(self, another):
-        if type(self) == type(another) and self.id==another.id:
+        if type(self) == type(another) and self.id == another.id:
             return True
         return False
 
@@ -104,14 +105,17 @@ class Entity(object):
 
 
 class Relation(object):
-    def __init__(self, t_id, r_type, e1, e2, e1_ty, e2_ty):
-        self.id = t_id
+    def __init__(self, r_id, r_type, e1, e2, e1_ty, e2_ty, m_r):
+        self.id = r_id
         self.entity1_type = e1_ty
         self.entity2_type = e2_ty
         self.relation_type = r_type
         self.entity1 = e1
         self.entity2 = e2
-        self.skip_sentence=0
+        self.skip_sentence = 0
+        self.multi_relation = m_r
+        # sum(len(i.multi_relation) for doc_r in list(map(lambda x: x.relations, result)) for i in doc_r)
+
 
 class Sample(object):
     def __init__(self):
@@ -121,4 +125,3 @@ class Sample(object):
 class Vocab(object):
     def __init__(self):
         pass
-

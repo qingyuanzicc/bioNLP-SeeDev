@@ -1,6 +1,7 @@
 import json
 import pickle
 import re
+from collections import Counter
 import numpy as np
 import jieba
 import os
@@ -71,3 +72,16 @@ def retrieve_relations(d):
             d.skip_sentence_relation.append(relation)
         else:
             realtion_in_sentence[0].relations.append(relation)
+
+
+def two_e_have_multi_r(ls, r2e_dict, doc_r_obj):
+    new = []
+    for i in ls:
+        new.append(' '.join(sorted(i)))
+    count = Counter(new)
+    multi_r_list = []
+    for ele, num in count.items():
+        assert num <= 2
+        if num == 2:
+            multi_r_list.append((list(filter(lambda x: r2e_dict[x] == ele, doc_r_obj.id)), num))
+    return multi_r_list
