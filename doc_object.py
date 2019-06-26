@@ -55,8 +55,8 @@ class Character(object):
 class Word(object):
     def __init__(self, w_id, w_text, w_freq, w_sid, is_entity, belong2t_id, have_rela, ridtid):
         # id, is_entity, start_end_index, 每个单词在文档中出现了几次等等
-        self.wordID = w_id
-        self.word_text = w_text
+        self.ID = w_id
+        self.text = w_text
         self.words_freq_in_doc = w_freq
         self.words_sentID = w_sid
         self.is_entity = is_entity
@@ -67,11 +67,11 @@ class Word(object):
 
 class Sentence(object):
     def __init__(self, s_id, s_len, s_start2end_index, s_words_num, s_text):
-        self.s_id = s_id
+        self.id = s_id
         self.s_len = s_len
         self.s_start2end_index = s_start2end_index
         self.s_words_num = s_words_num
-        self.s_text = s_text
+        self.text = s_text
         self.entitys = []
         self.relations = []
 
@@ -105,7 +105,7 @@ class Entity(object):
 
 
 class Relation(object):
-    def __init__(self, r_id, r_type, e1, e2, e1_ty, e2_ty, m_r):
+    def __init__(self, r_id, r_type, e1, e2, e1_ty, e2_ty):
         self.id = r_id
         self.entity1_type = e1_ty
         self.entity2_type = e2_ty
@@ -113,7 +113,7 @@ class Relation(object):
         self.entity1 = e1
         self.entity2 = e2
         self.skip_sentence = 0
-        self.multi_relation = m_r
+        # self.multi_relation = m_r
         # sum(len(i.multi_relation) for doc_r in list(map(lambda x: x.relations, result)) for i in doc_r)
 
 
@@ -122,6 +122,39 @@ class Sample(object):
         pass
 
 
-class Vocab(object):
+class Dictionary(object):
+    def __init__(self, word2id={}, id=0):
+        self.word2id = word2id
+        self.id = id
+
+    def add_word(self, word):
+        if word not in self.word2id:
+            self.word2id[word] = self.id
+            self.id += 1
+
+    def convert(self):
+        self.id2word = {id: word for word, id in self.word2id.items()}
+
+    def __len__(self):
+        return self.id
+
+
+class WordsDict(Dictionary):
     def __init__(self):
-        pass
+        super(WordsDict, self).__init__(WORD2ID, len(WORD2ID))
+
+    def __call__(self, sents):
+        words = set([word for sent in sents for word in sent])
+        for word in words:
+            self.add_word(word)
+
+
+class LabelsDict(Dictionary):
+    def __init__(self):
+        super(LabelsDict, self).__init__()
+
+    def __call__(self, labels):
+        labels = list(set(labels))
+        labels.sort(key=lambda x: int(x))
+        for label in labels:
+            self.add_word(label)

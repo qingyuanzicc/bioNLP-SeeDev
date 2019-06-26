@@ -120,21 +120,20 @@ def creat_sentence_obj(doc):
         s.init()
 
 
-# def creat_word_obj(rootp, a1_f):
-#     lines = utils.read_file(os.path.join(rootp, a1_f))
-#     for line in lines:
-#         words_list, words_num = utils.count_words_in_each_sentence(line)
-#         for word in words_list:
-#             word_id = 0
-#             word_text = word
-#             word_freq =
-#             word_in_which_sent =
-#             is_entit =
-#             belong2which_t_id =
-#             is_related_to_another_entity =
-#             ridtid =
-#             word_object = Word(word_id, word_text, word_freq, word_in_which_sent, is_entit, belong2which_t_id, is_related_to_another_entity, ridtid)
-#             d.words.append(word_object)
+def creat_word_obj(doc):
+    for sent_obj in doc.sentences:
+        words_list, words_num = utils.count_words_in_each_sentence(sent_obj.text)
+        for word in words_list:
+            word_id = 0
+            word_text = word
+            # word_freq =
+            # word_in_which_sent =
+            # is_entit =
+            # belong2which_t_id =
+            # is_related_to_another_entity =
+            # ridtid =
+            # word_object = Word(word_id, word_text, word_freq, word_in_which_sent, is_entit, belong2which_t_id, is_related_to_another_entity, ridtid)
+            # d.words.append(word_object)
 
 
 if __name__ == '__main__':
@@ -155,7 +154,7 @@ if __name__ == '__main__':
                 creat_entity_obj(rt, a1_file, d)
                 creat_relation_obj(rt, a2_file, d)
                 creat_sentence_obj(d)
-                # creat_word_obj()
+                creat_word_obj(d)
                 result.append(d)
     # sum(list(map(lambda x: len(x), list(map(lambda x: x.skip_sentence_relation, result)))
     if not os.path.exists('./saved_data'):  # 52 个跨句关系 总共1628个关系 630句话

@@ -83,5 +83,5 @@ def two_e_have_multi_r(ls, r2e_dict, doc_r_obj):
     for ele, num in count.items():
         assert num <= 2
         if num == 2:
-            multi_r_list.append((list(filter(lambda x: r2e_dict[x] == ele, doc_r_obj.id)), num))
+            multi_r_list.append((list(filter(lambda x: r2e_dict[x.id] == ele, doc_r_obj)), num))
     return multi_r_list
